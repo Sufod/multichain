@@ -9,5 +9,5 @@ import (
 
 func TestBitcoinZ(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "bitcoinZ Suite")
+	RunSpecs(t, "bitcoinZ Suite")q
 }

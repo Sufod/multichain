@@ -214,7 +214,7 @@ var _ = Describe("Multichain", func() {
 				},
 			},
 			{
-				multichain.Bitcoinz,
+				multichain.BitcoinZ,
 				func() multichain.AddressEncodeDecoder {
 					addrEncodeDecoder := bitcoinz.NewAddressEncodeDecoder(&bitcoinz.RegressionNetParams)
 					return addrEncodeDecoder
