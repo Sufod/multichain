@@ -14,4 +14,4 @@ RUN chmod +x /root/run.sh
 
 EXPOSE 11337
 
-ENTRYPOINT ["./root/run.sh"]
+ENTRYPOINT ["run.sh"]
