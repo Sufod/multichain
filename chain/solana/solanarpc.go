@@ -1,9 +1,12 @@
 package solana
 
+// AccountContext ...
+
 type AccountContext struct {
 	Slot int `json:"slot"`
 }
 
+// AccountValue ...
 type AccountValue struct {
 	Data       string `json:"data"`
 	Executable bool   `json:"executable"`
@@ -12,6 +15,7 @@ type AccountValue struct {
 	RentEpoch  int    `json:"rentEpoch"`
 }
 
+// ResponseGetAccountInfo ...
 type ResponseGetAccountInfo struct {
 	Context AccountContext `json:"context"`
 	Value   AccountValue   `json:"value"`

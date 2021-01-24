@@ -13,11 +13,13 @@ import (
 
 const DefaultClientRPCURL = "http://localhost:8899"
 
+// ClientOptions ...
 type ClientOptions struct {
 	Logger *zap.Logger
 	RPCURL string
 }
 
+// DefaultClientOptions ...
 func DefaultClientOptions() ClientOptions {
 	logger, err := zap.NewDevelopment()
 	if err != nil {
@@ -29,14 +31,17 @@ func DefaultClientOptions() ClientOptions {
 	}
 }
 
+// Client ...
 type Client struct {
 	opts ClientOptions
 }
 
+// NewClient ...
 func NewClient(opts ClientOptions) *Client {
 	return &Client{opts: opts}
 }
 
+// CallContract ...
 func (client *Client) CallContract(ctx context.Context, contract address.Address, input pack.Bytes) (output pack.Bytes, err error) {
 	if input != nil && len(input) != 0 {
 		return nil, fmt.Errorf("expected nil input, got %v input", input)
