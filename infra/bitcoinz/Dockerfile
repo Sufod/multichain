@@ -12,6 +12,9 @@ COPY bitcoinz.conf /root/bitcoinz.conf
 COPY run.sh /root/run.sh
 RUN chmod +x /root/run.sh
 
+WORKDIR /
+
 EXPOSE 11337
 
-ENTRYPOINT ["run.sh"]
+
+ENTRYPOINT ["./root/run.sh"]
