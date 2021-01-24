@@ -709,7 +709,7 @@ var _ = Describe("Multichain", func() {
 					return client, outputs, client.Confirmations
 				},
 				bitcoinz.NewTxBuilder(&bitcoinz.RegressionNetParams, 1000000),
-				multichain.bitcoinZ,
+				multichain.BitcoinZ,
 			},
 			{
 				"ZCASH_PK",
