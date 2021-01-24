@@ -26,6 +26,7 @@ import (
 	"github.com/renproject/multichain"
 	"github.com/renproject/multichain/chain/bitcoin"
 	"github.com/renproject/multichain/chain/bitcoincash"
+	"github.com/renproject/multichain/chain/bitcoinz"
 
 	// "github.com/renproject/multichain/chain/digibyte"
 	"github.com/renproject/multichain/chain/dogecoin"
@@ -210,6 +211,43 @@ var _ = Describe("Multichain", func() {
 					addrBytes := addrScriptHash.ScriptAddress()
 					addrBytes = append([]byte{8}, addrBytes...)
 					return multichain.RawAddress(pack.Bytes(addrBytes))
+				},
+			},
+			{
+				multichain.Bitcoinz,
+				func() multichain.AddressEncodeDecoder {
+					addrEncodeDecoder := bitcoinz.NewAddressEncodeDecoder(&bitcoinz.RegressionNetParams)
+					return addrEncodeDecoder
+				},
+				func() multichain.Address {
+					pk := id.NewPrivKey()
+					wif, err := btcutil.NewWIF((*btcec.PrivateKey)(pk), bitcoinz.RegressionNetParams.Params, true)
+					Expect(err).NotTo(HaveOccurred())
+					addrPubKeyHash, err := bitcoinz.NewAddressPubKeyHash(btcutil.Hash160(wif.PrivKey.PubKey().SerializeUncompressed()), &bitcoinz.RegressionNetParams)
+					Expect(err).NotTo(HaveOccurred())
+					return multichain.Address(addrPubKeyHash.EncodeAddress())
+				},
+				func() multichain.RawAddress {
+					pk := id.NewPrivKey()
+					wif, err := btcutil.NewWIF((*btcec.PrivateKey)(pk), bitcoinz.RegressionNetParams.Params, true)
+					Expect(err).NotTo(HaveOccurred())
+					addrPubKeyHash, err := bitcoinz.NewAddressPubKeyHash(btcutil.Hash160(wif.PrivKey.PubKey().SerializeUncompressed()), &bitcoinz.RegressionNetParams)
+					Expect(err).NotTo(HaveOccurred())
+					return multichain.RawAddress(pack.Bytes(base58.Decode(addrPubKeyHash.EncodeAddress())))
+				},
+				func() multichain.Address {
+					script := make([]byte, r.Intn(100))
+					r.Read(script)
+					addrScriptHash, err := bitcoinz.NewAddressScriptHash(script, &bitcoinz.RegressionNetParams)
+					Expect(err).NotTo(HaveOccurred())
+					return multichain.Address(addrScriptHash.EncodeAddress())
+				},
+				func() multichain.RawAddress {
+					script := make([]byte, r.Intn(100))
+					r.Read(script)
+					addrScriptHash, err := bitcoinz.NewAddressScriptHash(script, &bitcoinz.RegressionNetParams)
+					Expect(err).NotTo(HaveOccurred())
+					return multichain.RawAddress(pack.Bytes(base58.Decode(addrScriptHash.EncodeAddress())))
 				},
 			},
 			{
@@ -652,6 +690,26 @@ var _ = Describe("Multichain", func() {
 				},
 				dogecoin.NewTxBuilder(&dogecoin.RegressionNetParams),
 				multichain.Dogecoin,
+			},
+			{
+				"BITCOINZ_PK",
+				func(pkh []byte) (btcutil.Address, error) {
+					addr, err := bitcoinz.NewAddressPubKeyHash(pkh, &bitcoinz.RegressionNetParams)
+					return addr, err
+				},
+				func(script []byte) (btcutil.Address, error) {
+					addr, err := bitcoinz.NewAddressScriptHash(script, &bitcoinz.RegressionNetParams)
+					return addr, err
+				},
+				pack.String("http://0.0.0.0:11337"),
+				func(rpcURL pack.String, pkhAddr btcutil.Address) (multichain.UTXOClient, []multichain.UTXOutput, func(context.Context, pack.Bytes) (int64, error)) {
+					client := bitcoinz.NewClient(bitcoinz.DefaultClientOptions())
+					outputs, err := client.UnspentOutputs(ctx, 0, 999999999, multichain.Address(pkhAddr.EncodeAddress()))
+					Expect(err).NotTo(HaveOccurred())
+					return client, outputs, client.Confirmations
+				},
+				bitcoinz.NewTxBuilder(&bitcoinz.RegressionNetParams, 1000000),
+				multichain.bitcoinZ,
 			},
 			{
 				"ZCASH_PK",

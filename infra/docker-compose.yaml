@@ -52,6 +52,18 @@ services:
       - "${BITCOINCASH_ADDRESS}"
 
   #
+  # BitcoinZ
+  #
+  bitcoinz:
+    build:
+      context: ./bitcoinz
+    ports:
+      - "0.0.0.0:11337:11337"
+    entrypoint:
+      - "./root/run.sh"
+      - "${BITCOINZ_ADDRESS}"
+
+  #
   # DigiByte
   #
   digibyte:

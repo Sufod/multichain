@@ -65,6 +65,7 @@ jobs:
             docker-compose up -d --build \
               bitcoin \
               bitcoincash \
+              bitcoinz \
               dogecoin \
               terra \
               zcash
